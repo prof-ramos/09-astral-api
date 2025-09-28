@@ -4,7 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is the **Astrologer API** - a FastAPI-based RESTful service providing extensive astrology calculations via the Kerykeion library. The API generates birth charts, synastry charts, transit charts, and composite charts with SVG output, serving both developers and astrology enthusiasts through RapidAPI.
+This is the **Astrologer API** - a FastAPI-based RESTful service providing extensive astrology calculations via the Kerykeion library. The API generates birth charts, synastry charts, transit charts, and composite charts with SVG output. Originally designed for RapidAPI, it has been refactored into an independent, scalable service with modern authentication.
+
+**Note**: The README.md is in Portuguese and contains detailed API documentation for Brazilian astrology standards (Portuguese language, São Paulo timezone, tropical zodiac, Placidus house system).
 
 ## Project Architecture
 
@@ -18,22 +20,23 @@ This is the **Astrologer API** - a FastAPI-based RESTful service providing exten
 ### Application Structure
 ```
 app/
-├── main.py              # FastAPI application entry point with middleware setup
+├── main.py              # FastAPI application entry point (clean, no middleware)
 ├── routers/             # API endpoints organization
-│   └── main_router.py   # All astrology API endpoints (/api/v4/*)
+│   └── main_router.py   # All astrology API endpoints (/api/v4/*) with public/protected routing
+├── security/            # Authentication and authorization
+│   └── api_key_security.py  # FastAPI dependency injection for API key validation
 ├── types/               # Pydantic models
 │   ├── request_models.py    # Input validation models for all endpoints
 │   └── response_models.py   # Output models for API responses
 ├── config/              # Configuration management
-│   ├── settings.py      # Environment-based configuration loader
+│   ├── settings.py      # Environment-based configuration loader with ALLOWED_API_KEYS
 │   ├── config.dev.toml  # Development environment settings
-│   └── config.prod.toml # Production environment settings
-├── middleware/          # Custom middleware
-│   └── secret_key_checker_middleware.py  # API key validation for production
+│   └── config.prod.toml # Production environment settings (cleaned of RapidAPI)
 └── utils/               # Helper functions
-    ├── get_time_from_google.py  # UTC time fetching
-    ├── get_ntp_time.py         # Network time protocol
-    └── write_request_to_log.py # Request logging utilities
+    ├── get_time_from_google.py                # UTC time fetching
+    ├── get_ntp_time.py                       # Network time protocol
+    ├── write_request_to_log.py               # Request logging utilities
+    └── internal_server_error_json_response.py # Standard error response
 ```
 
 ### Configuration System
@@ -71,7 +74,13 @@ All endpoints follow the pattern `/api/v4/{endpoint}` and handle:
 - `pipenv run test-verbose` - Run pytest with extra verbose output
 - `pipenv run quality` - Run MyPy type checking (ignoring missing imports)
 - `pipenv run format` - Format code with Black (200 char line length)
-- `pipenv run schema` - Generate OpenAPI schema using dump_schema.py
+- `pipenv run schema` - Generate OpenAPI schema using dump_schema.py (outputs openapi.json)
+
+### Alternative: UV Package Manager
+If using `uv` instead of pipenv:
+- `uv venv && source .venv/bin/activate` - Create and activate virtual environment
+- `uv pip install -r <(pipenv requirements)` - Install dependencies
+- `uv pip install tomli` - Install TOML parsing for Python < 3.11
 
 ### Direct Commands
 - `uvicorn app.main:app --reload` - Start development server
@@ -83,6 +92,7 @@ All endpoints follow the pattern `/api/v4/{endpoint}` and handle:
 - `pytest tests/` - Run all tests in tests directory
 - `pytest -x` - Stop on first failure
 - `pytest -k "test_name"` - Run specific test by name
+- `pytest tests/test_main.py::test_birth_chart` - Run specific test function
 
 ### Code Quality Commands
 - `pipenv run format` - Format code with Black (200 char line length)
@@ -138,9 +148,11 @@ except Exception as e:
     if "data found for this city" in str(e):
         # GeoNames API error
         return JSONResponse(content={"status": "ERROR", "message": GEONAMES_ERROR_MESSAGE})
-    # Generic server error
+    # Generic server error (imported from utils)
     return InternalServerErrorJsonResponse
 ```
+
+The `InternalServerErrorJsonResponse` is a standardized 500 error response imported from `app/utils/internal_server_error_json_response.py`.
 
 ### Configuration Pattern
 - Environment-based config loading via `ENV_TYPE`
@@ -152,14 +164,24 @@ except Exception as e:
 - **API Key Security** - FastAPI dependency injection for route protection
 - **Public Router** - Health check and status endpoints (no authentication)
 - **Protected Router** - All API endpoints require `X-API-Key` header
-- Environment-based API key validation via `ALLOWED_API_KEYS`
+- **Environment-based API key validation** via `ALLOWED_API_KEYS`
+- **Router Separation Pattern**: `main_router.py` includes both `public_router` and `protected_router`
 
 ## API Development Guidelines
 
 ### Endpoint Implementation Pattern
 Follow this pattern when adding new endpoints:
+
+**For Public Endpoints** (no authentication required):
 ```python
-@router.post("/api/v4/new-endpoint", response_model=ResponseModel)
+@public_router.get("/api/v4/public-endpoint", response_model=ResponseModel)
+async def public_endpoint(request: Request):
+    # Implementation for health checks, status, etc.
+```
+
+**For Protected Endpoints** (API key required):
+```python
+@protected_router.post("/api/v4/new-endpoint", response_model=ResponseModel)
 async def new_endpoint(request_body: RequestModel, request: Request):
     write_request_to_log(20, request, "Description")
 
@@ -182,6 +204,12 @@ async def new_endpoint(request_body: RequestModel, request: Request):
         return InternalServerErrorJsonResponse
 ```
 
+**Router Setup**: Both routers are included in the main router:
+```python
+router.include_router(public_router)
+router.include_router(protected_router)
+```
+
 ### Adding New Request/Response Models
 1. **Request Models** (`app/types/request_models.py`):
    - Inherit from `AbstractBaseSubjectModel` for astrology data
@@ -199,6 +227,42 @@ async def new_endpoint(request_body: RequestModel, request: Request):
 
 ### Testing Approach
 - Test files should mirror the `app/` structure
-- Use `httpx` for API endpoint testing
+- Use `httpx` for API endpoint testing via FastAPI's `TestClient`
 - Mock external dependencies (GeoNames API)
 - Test both success and error scenarios
+- Main test file: `tests/test_main.py` covers core endpoints (status, birth-chart, relationship-score, etc.)
+- Tests validate both response structure and astrological calculation accuracy
+
+### Testing Authentication
+```bash
+# Test public endpoints (should work without authentication)
+curl http://localhost:8000/api/v4/health
+curl http://localhost:8000/
+
+# Test protected endpoints
+curl http://localhost:8000/api/v4/now  # Should return 401
+curl -H "X-API-Key: invalid" http://localhost:8000/api/v4/now  # Should return 401
+curl -H "X-API-Key: test-key-123" http://localhost:8000/api/v4/now  # Should work
+```
+
+### Local Development Setup
+```bash
+# 1. Environment setup
+export ALLOWED_API_KEYS="test-key-123,dev-key-456"
+export GEONAMES_USERNAME="your_geonames_username"  # Optional but recommended
+export ENV_TYPE="dev"
+
+# 2. Install dependencies (choose one method)
+# Option A: Pipenv
+pipenv install && pipenv install --dev
+
+# Option B: UV (faster)
+uv venv && source .venv/bin/activate
+uv pip install -r <(pipenv requirements)
+uv pip install tomli  # For Python < 3.11
+
+# 3. Start development server
+pipenv run dev
+# OR
+uvicorn app.main:app --reload
+```

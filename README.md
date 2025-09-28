@@ -1,99 +1,175 @@
 # Astrologer API
 
-The Astrologer API is a RESTful service providing extensive astrology calculations, designed for seamless integration into projects. It offers a set of astrological charts and data, making it an invaluable tool for both developers and astrology enthusiasts.
+A Astrologer API é um serviço independente que fornece cálculos astrológicos extensivos, projetado para integração perfeita em projetos. Ela oferece um conjunto completo de mapas astrológicos e dados, tornando-se uma ferramenta inestimável tanto para desenvolvedores quanto para entusiastas da astrologia. A API foi refatorada de sua versão original RapidAPI para ser um serviço autônomo e escalável com autenticação moderna.
 
-Here's an example of a birth chart generated using the Astrologer API:
+Aqui está um exemplo de mapa natal gerado usando a Astrologer API:
 
-![John Lenon Chart](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Dark%20Theme%20-%20Natal%20Chart.svg)
-
-
-## Quick Endpoints Overview
+![Mapa de John Lennon](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Dark%20Theme%20-%20Natal%20Chart.svg)
 
 
-| Endpoint                          | Method | Description |
-|-----------------------------------|--------|-------------|
-| `/api/v4/birth-chart`            | POST   | Generates a full birth chart as an SVG string, including planetary positions and aspects. |
-| `/api/v4/synastry-chart`         | POST   | Creates a synastry chart comparing two subjects, displaying their interactions and compatibility, along with an SVG representation. |
-| `/api/v4/transit-chart`          | POST   | Generates a transit chart for a subject, showing current planetary influences, with an SVG visual representation. |
-| `/api/v4/composite-chart`        | POST   | Computes a composite chart for two subjects using the midpoint method, including aspects and an SVG visual representation. |
-| `/api/v4/relationship-score`     | POST   | Calculates a compatibility score (0-44) using the Ciro Discepolo method to assess relationship potential. |
-| `/api/v4/natal-aspects-data`     | POST   | Provides detailed birth chart data and aspects without the visual chart. |
-| `/api/v4/synastry-aspects-data`  | POST   | Returns synastry-related data and aspects between two subjects, without an SVG chart. |
-| `/api/v4/transit-aspects-data`   | POST   | Offers transit chart data and aspects for a subject, without an SVG visual representation. |
-| `/api/v4/composite-aspects-data` | POST   | Delivers composite chart data and aspects without generating an SVG chart. |
-| `/api/v4/birth-data`             | POST   | Returns essential birth chart data without aspects or visual representation. |
-| `/api/v4/now`                    | GET    | Retrieves birth chart data for the current UTC time, excluding aspects and the visual chart. |
+## Visão Geral Rápida dos Endpoints
 
-## API Access
 
-The Astrologer API is now available as an independent service with simplified authentication.
+| Endpoint                          | Método | Descrição |
+|-----------------------------------|--------|-----------|
+| `/api/v4/birth-chart`            | POST   | Gera um mapa natal completo como string SVG, incluindo posições planetárias e aspectos. |
+| `/api/v4/synastry-chart`         | POST   | Cria um mapa de sinastria comparando dois sujeitos, exibindo suas interações e compatibilidade, junto com uma representação SVG. |
+| `/api/v4/transit-chart`          | POST   | Gera um mapa de trânsito para um sujeito, mostrando influências planetárias atuais, com representação visual SVG. |
+| `/api/v4/composite-chart`        | POST   | Computa um mapa composto para dois sujeitos usando o método do ponto médio, incluindo aspectos e representação visual SVG. |
+| `/api/v4/relationship-score`     | POST   | Calcula uma pontuação de compatibilidade (0-44) usando o método Ciro Discepolo para avaliar o potencial de relacionamento. |
+| `/api/v4/natal-aspects-data`     | POST   | Fornece dados detalhados do mapa natal e aspectos sem o mapa visual. |
+| `/api/v4/synastry-aspects-data`  | POST   | Retorna dados relacionados à sinastria e aspectos entre dois sujeitos, sem mapa SVG. |
+| `/api/v4/transit-aspects-data`   | POST   | Oferece dados do mapa de trânsito e aspectos para um sujeito, sem representação visual SVG. |
+| `/api/v4/composite-aspects-data` | POST   | Entrega dados do mapa composto e aspectos sem gerar mapa SVG. |
+| `/api/v4/birth-data`             | POST   | Retorna dados essenciais do mapa natal sem aspectos ou representação visual. |
+| `/api/v4/now`                    | GET    | Obtém dados do mapa natal para a hora UTC atual, excluindo aspectos e o mapa visual. |
 
-## Documentation
+## Acesso à API
 
-Explore the comprehensive API documentation:
+A Astrologer API está disponível como um serviço independente com autenticação por chave de API. Este serviço foi projetado especificamente para os padrões astrológicos brasileiros.
 
-- **Interactive API Documentation**: Available at `/docs` endpoint when running the API
-- **Redoc Documentation**: Available at `/redoc` endpoint when running the API
-- **OpenAPI Specification**: Generate using `python dump_schema.py`
+## Documentação
 
-## Getting Started
+Explore a documentação abrangente da API:
 
-To begin using the Astrologer API, you need to include your API key in the request headers.
+- **Especificação da API**: Consulte a documentação técnica incluída no projeto
+- **Documentação Interativa**: Acesse `/docs` quando o servidor estiver rodando para ver a documentação Swagger
+- **Redoc**: Acesse `/redoc` para uma versão alternativa da documentação
 
-### Authentication
+## Instalação e Desenvolvimento
 
-All API endpoints (except health checks) require authentication via API key in the request headers.
+### Requisitos
+- Python 3.11+
+- Pipenv ou UV para gerenciamento de dependências
 
-### Example Request Headers
+### Configuração Local
 
-Ensure your API requests include the following header:
+1. **Clone o repositório:**
+```bash
+git clone https://github.com/g-battaglia/v4.astrologer-api.git
+cd v4.astrologer-api
+```
+
+2. **Instale as dependências:**
+```bash
+# Usando Pipenv (recomendado)
+pipenv install && pipenv install --dev
+
+# Ou usando UV (mais rápido)
+uv venv && source .venv/bin/activate
+uv pip install -r <(pipenv requirements)
+uv pip install tomli  # Para Python < 3.11
+```
+
+3. **Configure as variáveis de ambiente:**
+```bash
+export ALLOWED_API_KEYS="test-key-123,dev-key-456"
+export GEONAMES_USERNAME="seu_usuario_geonames"  # Opcional
+export ENV_TYPE="dev"
+```
+
+4. **Execute o servidor de desenvolvimento:**
+```bash
+pipenv run dev
+# ou
+uvicorn app.main:app --reload
+```
+
+A API estará disponível em `http://localhost:8000` com documentação em `/docs`.
+
+### Comandos de Desenvolvimento
+
+```bash
+# Executar testes
+pipenv run test
+
+# Verificação de tipos
+pipenv run quality
+
+# Formatação de código
+pipenv run format
+
+# Gerar esquema OpenAPI
+pipenv run schema
+```
+
+### Testando a API
+
+```bash
+# Endpoint público (sem autenticação)
+curl http://localhost:8000/
+curl http://localhost:8000/api/v4/health
+
+# Endpoint protegido (com chave de API)
+curl -H "X-API-Key: test-key-123" http://localhost:8000/api/v4/now
+```
+
+## Primeiros Passos
+
+Para começar a usar a Astrologer API, você precisa incluir sua chave de API nos cabeçalhos da requisição.
+
+### Autenticação
+
+Todos os endpoints da API (exceto verificações de saúde) requerem autenticação via chave de API nos cabeçalhos da requisição.
+
+### Exemplo de Cabeçalhos de Requisição
+
+Certifique-se de que suas requisições de API incluam o seguinte cabeçalho:
 
 ```javascript
 headers: {
-    'X-API-Key': 'YOUR_API_KEY'
+    'X-API-Key': 'SUA_CHAVE_API'
 }
 ```
 
-Replace `YOUR_API_KEY` with your actual API key provided by the API administrator.
+Substitua `SUA_CHAVE_API` pela sua chave de API real fornecida pelo administrador da API.
 
-### Environment Setup
+### Configuração do Ambiente
 
-Configure the following environment variables:
+Configure as seguintes variáveis de ambiente:
 
 ```bash
-# Required for API authentication
-ALLOWED_API_KEYS="your_api_key_1,your_api_key_2,your_api_key_3"
+# Obrigatório para autenticação da API
+ALLOWED_API_KEYS="sua_chave_api_1,sua_chave_api_2,sua_chave_api_3"
 
-# Optional: For automatic coordinate resolution (recommended)
-GEONAMES_USERNAME="your_geonames_username"
+# Opcional: Para resolução automática de coordenadas (recomendado)
+GEONAMES_USERNAME="seu_usuario_geonames"
 
-# Optional: Set environment type
-ENV_TYPE="dev"  # or "production"
+# Opcional: Definir tipo de ambiente
+ENV_TYPE="dev"  # ou "production"
+
+# Padrão: Idioma brasileiro
+DEFAULT_LANGUAGE="PT"
+
+# Padrão: Fuso horário São Paulo
+DEFAULT_TIMEZONE="America/Sao_Paulo"
 ```
 
 
-## Features
+## Funcionalidades
 
-### Charts
+**Padrões Brasileiros:** Esta API foi desenvolvida especificamente para os padrões astrológicos brasileiros, com idioma português como padrão, fuso horário de São Paulo (America/Sao_Paulo), zodíaco tropical, sistema de casas Placidus e perspectiva geocêntrica aparente. Todos os exemplos e configurações padrão seguem estes critérios nacionais.
 
-The Astrologer API provides various `*-chart` endpoints with customizable options:
+### Mapas
 
-#### Languages
+A Astrologer API fornece vários endpoints `*-chart` com opções personalizáveis:
 
-You can specify the `lang` parameter to select the language for your chart. Available options are:
+#### Idiomas
 
-- `EN`: English (default)
-- `FR`: French
-- `PT`: Portuguese
-- `ES`: Spanish
-- `TR`: Turkish
-- `RU`: Russian
-- `IT`: Italian
-- `CN`: Chinese
-- `DE`: German
+Você pode especificar o parâmetro `lang` para selecionar o idioma do seu mapa. As opções disponíveis são:
+
+- `PT`: Português (padrão)
+- `EN`: Inglês
+- `FR`: Francês
+- `ES`: Espanhol
+- `TR`: Turco
+- `RU`: Russo
+- `IT`: Italiano
+- `CN`: Chinês
+- `DE`: Alemão
 - `HI`: Hindi
 
-Example API request:
+Exemplo de requisição da API:
 
 ```json
 {
@@ -103,61 +179,74 @@ Example API request:
         "day": 12,
         "hour": 12,
         "minute": 12,
-        "longitude": 0,
-        "latitude": 51.4825766,
-        "city": "London",
-        "nation": "GB",
-        "timezone": "Europe/London",
-        "name": "John Doe",
+        "longitude": -46.633308,
+        "latitude": -23.550520,
+        "city": "São Paulo",
+        "nation": "BR",
+        "timezone": "America/Sao_Paulo",
+        "name": "João Silva",
         "zodiac_type": "Tropic"
     },
-    "language": "RU"
+    "language": "PT"
 }
 ```
 
-#### Themes
+#### Temas
 
-Customize the appearance of your charts using the `theme` parameter. Available themes are:
+Personalize a aparência dos seus mapas usando o parâmetro `theme`. Os temas disponíveis são:
 
-Available themes:
+Temas disponíveis:
 
-- `light`: Modern soft-colored light theme
+- `light`: Tema claro moderno com cores suaves
 
-![John Lennon Chart Example](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Light%20Theme%20-%20Natal%20Chart.svg)
+![Exemplo de Mapa de John Lennon](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Light%20Theme%20-%20Natal%20Chart.svg)
 
-- `dark`: Modern dark theme
-  
-![John Lennon Chart Example](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Dark%20Theme%20-%20Natal%20Chart.svg)
+- `dark`: Tema escuro moderno
 
-- `dark-high-contrast`: High-contrast dark theme
+![Exemplo de Mapa de John Lennon](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Dark%20Theme%20-%20Natal%20Chart.svg)
 
-![John Lennon Chart Example](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Dark%20High%20Contrast%20Theme%20-%20Natal%20Chart.svg)
+- `dark-high-contrast`: Tema escuro de alto contraste
 
-- `classic`: Traditional colorful theme
+![Exemplo de Mapa de John Lennon](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/John%20Lennon%20-%20Dark%20High%20Contrast%20Theme%20-%20Natal%20Chart.svg)
 
-![Albert Einstein Chart Example](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/Albert%20Einstein%20-%20Natal%20Chart.svg)
+- `classic`: Tema colorido tradicional
 
-Example API request:
+![Exemplo de Mapa de Albert Einstein](https://raw.githubusercontent.com/g-battaglia/kerykeion/refs/heads/master/tests/charts/svg/Albert%20Einstein%20-%20Natal%20Chart.svg)
+
+Exemplo de requisição da API:
 
 ```json
 {
-    "subject": { /* ... */ },
+    "subject": {
+        "year": 1980,
+        "month": 12,
+        "day": 12,
+        "hour": 12,
+        "minute": 12,
+        "longitude": -46.633308,
+        "latitude": -23.550520,
+        "city": "São Paulo",
+        "nation": "BR",
+        "timezone": "America/Sao_Paulo",
+        "name": "João Silva",
+        "zodiac_type": "Tropic"
+    },
     "theme": "dark"
 }
 ```
 
 
-### Zodiac Types
+### Tipos de Zodíaco
 
-You can choose between the Sidereal and Tropical zodiacs using the `zodiac_type` parameter in the `subject` key of most endpoints.
+Você pode escolher entre os zodíacos Sideral e Tropical usando o parâmetro `zodiac_type` na chave `subject` da maioria dos endpoints.
 
-- `tropic`: Tropical zodiac (default)
-- `sidereal`: Sidereal zodiac
+- `tropic`: Zodíaco tropical (padrão no Brasil)
+- `sidereal`: Zodíaco sideral
 
-If you select `sidereal`, you must also specify the `sidereal_mode` parameter, which offers various ayanamsha (zodiacal calculation modes):
+Se você selecionar `sidereal`, deve também especificar o parâmetro `sidereal_mode`, que oferece vários ayanamshas (modos de cálculo zodiacal):
 
 - `FAGAN_BRADLEY`
-- `LAHIRI` (standard for Vedic astrology)
+- `LAHIRI` (padrão para astrologia védica)
 - `DELUCE`
 - `RAMAN`
 - `USHASHASHI`
@@ -177,9 +266,9 @@ If you select `sidereal`, you must also specify the `sidereal_mode` parameter, w
 - `J1900`
 - `B1950`
 
-The most commonly used ayanamshas are `FAGAN_BRADLEY` and `LAHIRI`.
+Os ayanamshas mais comumente usados são `FAGAN_BRADLEY` e `LAHIRI`.
 
-Example API request:
+Exemplo de requisição da API:
 
 ```json
 {
@@ -189,34 +278,34 @@ Example API request:
         "day": 12,
         "hour": 12,
         "minute": 12,
-        "longitude": 0,
-        "latitude": 51.4825766,
-        "city": "London",
-        "nation": "GB",
-        "timezone": "Europe/London",
-        "name": "John Doe",
+        "longitude": -46.633308,
+        "latitude": -23.550520,
+        "city": "São Paulo",
+        "nation": "BR",
+        "timezone": "America/Sao_Paulo",
+        "name": "João Silva",
         "zodiac_type": "Sidereal",
         "sidereal_mode": "FAGAN_BRADLEY"
     }
 }
 ```
 
-### House Systems
+### Sistemas de Casas
 
-The `HouseSystem` parameter defines the method used to divide the celestial sphere into twelve houses. Here are the available options:
+O parâmetro `HouseSystem` define o método usado para dividir a esfera celestial em doze casas. Aqui estão as opções disponíveis:
 
-- **A**: Equal
+- **A**: Igual
 - **B**: Alcabitius
 - **C**: Campanus
-- **D**: Equal (MC)
+- **D**: Igual (MC)
 - **F**: Carter poli-equ.
-- **H**: Horizon/Azimut
+- **H**: Horizonte/Azimute
 - **I**: Sunshine
 - **i**: Sunshine/Alt.
 - **K**: Koch
 - **L**: Pullen SD
 - **M**: Morinus
-- **N**: Equal/1=Aries
+- **N**: Igual/1=Áries
 - **O**: Porphyry
 - **P**: Placidus
 - **Q**: Pullen SR
@@ -224,14 +313,14 @@ The `HouseSystem` parameter defines the method used to divide the celestial sphe
 - **S**: Sripati
 - **T**: Polich/Page
 - **U**: Krusinski-Pisa-Goelzer
-- **V**: Equal/Vehlow
-- **W**: Equal/Whole Sign
-- **X**: Axial rotation system/Meridian houses
-- **Y**: APC houses
+- **V**: Igual/Vehlow
+- **W**: Igual/Signo Inteiro
+- **X**: Sistema de rotação axial/Casas meridionais
+- **Y**: Casas APC
 
-Usually, the standard house system used is Placidus (P).
+Geralmente, o sistema de casas padrão usado no Brasil é Placidus (P).
 
-Example API request:
+Exemplo de requisição da API:
 
 ```json
 {
@@ -241,32 +330,32 @@ Example API request:
         "day": 12,
         "hour": 12,
         "minute": 12,
-        "longitude": 0,
-        "latitude": 51.4825766,
-        "city": "London",
-        "nation": "GB",
-        "timezone": "Europe/London",
-        "name": "John Doe",
+        "longitude": -46.633308,
+        "latitude": -23.550520,
+        "city": "São Paulo",
+        "nation": "BR",
+        "timezone": "America/Sao_Paulo",
+        "name": "João Silva",
         "zodiac_type": "Tropic",
         "house_system": "A"
     }
 }
 ```
 
-This allows you to specify the desired house system for calculating and displaying the positions of celestial bodies.
+Isso permite especificar o sistema de casas desejado para calcular e exibir as posições dos corpos celestes.
 
-### Perspective Types
+### Tipos de Perspectiva
 
-The PerspectiveType defines the viewpoint from which the positions of celestial bodies are calculated. Here are the available options:
+O PerspectiveType define o ponto de vista a partir do qual as posições dos corpos celestes são calculadas. Aqui estão as opções disponíveis:
 
-- "Apparent Geocentric": Earth-centered and shows the apparent positions of celestial bodies as seen from Earth. This is the most commonly used and the default perspective.
-- "Heliocentric": Sun-centered.
-- "Topocentric": This perspective is based on the observer's specific location on the Earth's surface.
-- "True Geocentric": This perspective is also Earth-centered but shows the true positions of celestial bodies without the apparent shifts caused by Earth's atmosphere.
-  
-Usually, the standard perspective used is "Apparent Geocentric".
+- "Apparent Geocentric": Centrado na Terra e mostra as posições aparentes dos corpos celestes como vistos da Terra. Esta é a mais comumente usada e a perspectiva padrão no Brasil.
+- "Heliocentric": Centrado no Sol.
+- "Topocentric": Esta perspectiva é baseada na localização específica do observador na superfície da Terra.
+- "True Geocentric": Esta perspectiva também é centrada na Terra, mas mostra as posições verdadeiras dos corpos celestes sem os desvios aparentes causados pela atmosfera da Terra.
 
-Example usage in an API request:
+Geralmente, a perspectiva padrão usada no Brasil é "Apparent Geocentric".
+
+Exemplo de uso em uma requisição da API:
 
 ```json
 {
@@ -276,25 +365,25 @@ Example usage in an API request:
         "day": 12,
         "hour": 12,
         "minute": 12,
-        "longitude": 0,
-        "latitude": 51.4825766,
-        "city": "London",
-        "nation": "GB",
-        "timezone": "Europe/London",
-        "name": "John Doe",
+        "longitude": -46.633308,
+        "latitude": -23.550520,
+        "city": "São Paulo",
+        "nation": "BR",
+        "timezone": "America/Sao_Paulo",
+        "name": "João Silva",
         "zodiac_type": "Tropic",
         "perspective": "Heliocentric"
     }
 }
 ```
 
-This allows you to specify the desired perspective for calculating and displaying the positions of celestial bodies.
+Isso permite especificar a perspectiva desejada para calcular e exibir as posições dos corpos celestes.
 
-### Wheel Only Charts
+### Mapas Apenas com Roda
 
-To generate charts that contain only the zodiac wheel without any textual information, you can use the `wheel_only` option in your API call. When this option is set to `True`, only the zodiac wheel will be returned.
+Para gerar mapas que contenham apenas a roda zodiacal sem qualquer informação textual, você pode usar a opção `wheel_only` na sua chamada da API. Quando esta opção é definida como `True`, apenas a roda zodiacal será retornada.
 
-Example API request:
+Exemplo de requisição da API:
 
 ```json
 {
@@ -304,32 +393,32 @@ Example API request:
         "day": 12,
         "hour": 12,
         "minute": 12,
-        "longitude": 0,
-        "latitude": 51.4825766,
-        "city": "London",
-        "nation": "GB",
-        "timezone": "Europe/London",
-        "name": "John Doe",
+        "longitude": -46.633308,
+        "latitude": -23.550520,
+        "city": "São Paulo",
+        "nation": "BR",
+        "timezone": "America/Sao_Paulo",
+        "name": "João Silva",
         "zodiac_type": "Tropic"
     },
     "wheel_only": true
 }
 ```
 
-This can be useful for creating clean and simple visual representations of the zodiac without any additional clutter.
+Isso pode ser útil para criar representações visuais limpas e simples do zodíaco sem qualquer desordem adicional.
 
-## Timezones
+## Fuso Horários
 
-Accurate astrological calculations require the correct timezone. Refer to the following link for a complete list of timezones:
+Cálculos astrológicos precisos requerem o fuso horário correto. Consulte o seguinte link para uma lista completa de fusos horários:
 
-[List of TZ Database Time Zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+[Lista de Fusos Horários do Banco de Dados TZ](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
 
-#### Active Points and Aspects
+#### Pontos Ativos e Aspectos
 
-For all the Charts endpoints (Birth Chart, Transit Chart), 
-Natal Aspects Data and Synastry Aspects Data you can customize which celestial points to include and which aspects to calculate using the `active_points` and `active_aspects` parameters.
+Para todos os endpoints de Mapas (Mapa Natal, Mapa de Trânsito),
+Dados de Aspectos Natals e Dados de Aspectos de Sinastria você pode personalizar quais pontos celestes incluir e quais aspectos calcular usando os parâmetros `active_points` e `active_aspects`.
 
-Example API request:
+Exemplo de requisição da API:
 
 ```json
 {
@@ -339,12 +428,12 @@ Example API request:
         "day": 12,
         "hour": 12,
         "minute": 12,
-        "longitude": 0,
-        "latitude": 51.4825766,
-        "city": "London",
-        "nation": "GB",
-        "timezone": "Europe/London",
-        "name": "John Doe",
+        "longitude": -46.633308,
+        "latitude": -23.550520,
+        "city": "São Paulo",
+        "nation": "BR",
+        "timezone": "America/Sao_Paulo",
+        "name": "João Silva",
         "zodiac_type": "Tropic"
     },
     "active_points": [
@@ -394,31 +483,31 @@ Example API request:
 }
 ```
 
-These parameters allow you to:
-- Specify which celestial points to include in the chart and calculations
-- Define which aspects to calculate along with their orbs (the degree of allowable deviation from exact aspect)
+Estes parâmetros permitem:
+- Especificar quais pontos celestes incluir no mapa e cálculos
+- Definir quais aspectos calcular junto com seus orbes (o grau de desvio permitido do aspecto exato)
 
-## Automatic Coordinates
+## Coordenadas Automáticas
 
-It is possible to use automatic coordinates if you do not want to implement a different method for calculating latitude, longitude, and timezone.
+É possível usar coordenadas automáticas se você não quiser implementar um método diferente para calcular latitude, longitude e fuso horário.
 
-To do this, you must pass the `geonames_username` parameter inside the `subject` object in every request that contains the `subject` object.
+Para fazer isso, você deve passar o parâmetro `geonames_username` dentro do objeto `subject` em todas as requisições que contenham o objeto `subject`.
 
-**Logic**
+**Lógica**
 
-- If `geonames_username` is present, the `longitude`, `latitude`, and `timezone` parameters are automatically ignored.
-- If **NOT** present, all three parameters (`longitude`, `latitude`, and `timezone`) must be specified.
+- Se `geonames_username` estiver presente, os parâmetros `longitude`, `latitude` e `timezone` são automaticamente ignorados.
+- Se **NÃO** estiver presente, todos os três parâmetros (`longitude`, `latitude` e `timezone`) devem ser especificados.
 
-**Recommendation**
+**Recomendação**
 
-It is recommended to use actual coordinates directly for greater accuracy.
+É recomendado usar coordenadas reais diretamente para maior precisão.
 
-**Obtaining a Geonames Username**
+**Obtendo um Nome de Usuário Geonames**
 
-If you want to calculate coordinates automatically, you need to obtain a `username` for the Geonames Timezone service. The service is free for up to **10,000 requests per day**.
-You can obtain a Geonames username by signing up at <a href="http://www.geonames.org/login" target="_blank">Geonames</a>.
+Se você quiser calcular coordenadas automaticamente, precisa obter um `username` para o serviço de Fuso Horário Geonames. O serviço é gratuito para até **10.000 requisições por dia**.
+Você pode obter um nome de usuário Geonames cadastrando-se em <a href="http://www.geonames.org/login" target="_blank">Geonames</a>.
 
-**Example**
+**Exemplo**
 
 ```json
 {
@@ -428,41 +517,42 @@ You can obtain a Geonames username by signing up at <a href="http://www.geonames
         "day": 12,
         "hour": 12,
         "minute": 12,
-        "city": "Jamaica, New York",
-        "nation": "US",
-        "name": "John Doe",
+        "city": "São Paulo, SP",
+        "nation": "BR",
+        "name": "João Silva",
         "zodiac_type": "Tropic",
-        "geonames_username": "YOUR_GEONAMES_USERNAME"
+        "geonames_username": "SEU_USUARIO_GEONAMES"
     }
 }
 ```
 
-## Copyright and License
+## Direitos Autorais e Licença
 
-Astrologer API is Free/Libre Open Source Software with an AGPLv3 license. All the terms and conditions of the AGPLv3 license apply to the Astrologer API.
-You can review and contribute to the source code via the official repositories:
+A Astrologer API é um Software Livre/Open Source com licença AGPLv3. Todos os termos e condições da licença AGPLv3 se aplicam à Astrologer API.
+Você pode revisar e contribuir com o código fonte através dos repositórios oficiais:
 
 - [V4 Astrologer API](https://github.com/g-battaglia/v4.astrologer-api)
 
-Astrologer API is developed by Giacomo Battaglia and is based on Kerykeion, a Python library for astrology calculations by the same author. The underlying tools are built on the Swiss Ephemeris.
+A Astrologer API é desenvolvida por Giacomo Battaglia e é baseada no Kerykeion, uma biblioteca Python para cálculos astrológicos do mesmo autor. As ferramentas subjacentes são construídas sobre o Swiss Ephemeris.
 
-Since it is an external API service, integrating data and charts retrieved via the API does not impose any licensing restrictions, allowing use in projects with closed source licenses.
+Como é um serviço de API externo, integrar dados e mapas obtidos via API não impõe restrições de licenciamento, permitindo uso em projetos com licenças de código fechado.
 
-## Commercial Use
+## Uso Comercial
 
-The Astrologer API can be freely used in both open-source and closed-source commercial applications without restrictions, as it functions as an external service.
+A Astrologer API pode ser livremente usada em aplicações comerciais open-source e closed-source sem restrições, pois funciona como um serviço externo.
 
-For full compliance, we recommend adding this statement in your Terms and Conditions or elsewhere on your site/app:
+Para conformidade total, recomendamos adicionar esta declaração nos seus Termos e Condições ou em outro lugar no seu site/app:
 
 ---
-Astrological data and charts on this site are generated using [AstrologerAPI](https://rapidapi.com/gbattaglia/api/astrologer), an open-source third-party service licensed under AGPL v3. Source code:
-- [Astrologer API Github](https://github.com/g-battaglia/Astrologer-API)
+Dados astrológicos e mapas neste site são gerados usando a Astrologer API, um serviço open-source licenciado sob AGPL v3. Código fonte:
+- [V4 Astrologer API](https://github.com/g-battaglia/v4.astrologer-api)
+- [Astrologer API Original](https://github.com/g-battaglia/Astrologer-API)
 ---
 
-This guarantees full transparency and complete licensing compliance, leaving no room for doubt.
+Isso garante transparência total e conformidade completa de licenciamento, não deixando espaço para dúvidas.
 
 
-## Contact & Support  
+## Contato e Suporte
 
-Need help or have feedback? Reach us at:
+Precisa de ajuda ou tem feedback? Entre em contato conosco:
 [kerykeion.astrology@gmail.com](mailto:kerykeion.astrology@gmail.com)  
