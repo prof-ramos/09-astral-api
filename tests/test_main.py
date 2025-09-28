@@ -10,8 +10,15 @@ path.append(str(Path(__file__).parent.parent))
 from fastapi.testclient import TestClient
 from app.main import app
 from datetime import datetime, timezone
+import os
+
+# Set test API key
+os.environ["ALLOWED_API_KEYS"] = "test-api-key-123"
 
 client = TestClient(app)
+
+# Headers with API key for protected endpoints
+auth_headers = {"X-API-Key": "test-api-key-123"}
 
 
 def test_status():
@@ -31,7 +38,7 @@ def test_get_now():
     """
 
     now = datetime.now(timezone.utc)
-    response = client.get("/api/v4/now")
+    response = client.get("/api/v4/now", headers=auth_headers)
 
     assert response.status_code == 200
     assert response.json()["status"] == "OK"
@@ -47,6 +54,7 @@ def test_birth_data():
 
     response = client.post(
         "/api/v4/birth-data",
+        headers=auth_headers,
         json={
             "subject": {
                 "name": "FastAPI Unit Test",
@@ -92,6 +100,7 @@ def test_relationship_score():
 
     response = client.post(
         "/api/v4/relationship-score",
+        headers=auth_headers,
         json={
             "first_subject": {
                 "name": "FastAPI Unit Test",
@@ -136,6 +145,7 @@ def test_birth_chart():
 
     response = client.post(
         "/api/v4/birth-chart",
+        headers=auth_headers,
         json={
             "subject": {
                 "name": "FastAPI Unit Test",
