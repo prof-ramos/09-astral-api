@@ -1,0 +1,8 @@
+admin_email = "kerykeion.astrology@gmail.com"
+debug = true
+docs_url = "/docs"
+redoc_url = "/redoc"
+log_level = 10
+
+allowed_hosts = ['*']
+allowed_cors_origins = ['*']
