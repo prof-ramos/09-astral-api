@@ -14,10 +14,10 @@ class AbstractBaseSubjectModel(BaseModel, ABC):
     minute: int = Field(description="The minute of birth.", examples=[12])
     longitude: Optional[float] = Field(description="The longitude of the birth location. Defaults on London.", examples=[0], default=None)
     latitude: Optional[float] = Field(description="The latitude of the birth location. Defaults on London.", examples=[51.4825766], default=None)
-    city: str = Field(description="The name of city of birth.", examples=["London"])
-    nation: Optional[str] = Field(default="null", description="The name of the nation of birth.", examples=["GB"])
-    timezone: Optional[str] = Field(description="The timezone of the birth location.", examples=["Europe/London"], default=None)
-    geonames_username: Optional[str] = Field(description="The username for the Geonames API.", examples=[None], default=None)
+    city: str = Field(description="The name of city of birth.", examples=["Belo Horizonte"])
+    nation: str = Field(description="The name of the nation of birth.", examples=["BR"], default="BR")
+    timezone: str = Field(description="The timezone of the birth location.", examples=["America/Sao_Paulo"], default="America/Sao_Paulo")
+    geonames_username: str = Field(description="The username for the Geonames API.", examples=["gfcramos"], default="gfcramos")
 
 
     @field_validator("longitude")
@@ -110,20 +110,21 @@ class AbstractBaseSubjectModel(BaseModel, ABC):
         tz = self.timezone
         geonames = self.geonames_username
 
-        # If latitude, longitude, and timezone are all missing, geonames_username must be provided
-        if lat is None and lng is None and tz is None:
-            if not geonames:
-                raise ValueError("Either provide latitude, longitude, timezone or specify geonames_username.")
+        # If all coordinates are provided, use them (bypass geonames)
+        if lat is not None and lng is not None:
+            return self
 
-        # If any one of latitude, longitude, or timezone is missing (but not all), either fill them all or use geonames_username
-        missing_fields = sum(1 for f in [lat, lng, tz] if f is None)
-        if 0 < missing_fields < 3 and not geonames:
-            raise ValueError("Please provide all missing fields (latitude, longitude, timezone) or specify geonames_username.")
+        # If geonames is available (default), use it for missing coordinates
+        if geonames:
+            # Clear any partial coordinates to ensure geonames is used
+            if lat is None or lng is None:
+                self.latitude = None
+                self.longitude = None
+            return self
 
-        if geonames and (lat or lng or tz):
-            self.latitude = None
-            self.longitude = None
-            self.timezone = None
+        # Fallback: require coordinates if geonames is not available
+        if lat is None or lng is None:
+            raise ValueError("Please provide latitude and longitude, or ensure geonames_username is set.")
 
         return self
 

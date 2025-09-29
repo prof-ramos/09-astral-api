@@ -41,7 +41,7 @@ else:
 
 class Settings(BaseSettings):
     # Environment variables
-    geonames_username: str = getenv("GEONAMES_USERNAME", "")
+    geonames_username: str = getenv("GEONAMES_USERNAME", "gfcramos")
     env_type: str | bool = ENV_TYPE
 
     @property
