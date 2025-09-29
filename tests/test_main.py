@@ -213,3 +213,78 @@ def test_birth_chart():
     assert round(response.json()["aspects"][0]["diff"]) == 58
     assert response.json()["aspects"][0]["p1"] == 0
     assert response.json()["aspects"][0]["p2"] == 1
+
+
+def test_birth_chart_gabriel_ramos():
+    """
+    Tests if the birth chart is returned correctly for Gabriel Ramos
+    """
+
+    response = client.post(
+        "/api/v4/birth-chart",
+        headers=auth_headers,
+        json={
+            "subject": {
+                "name": "Gabriel Ramos",
+                "year": 1995,
+                "month": 8,
+                "day": 2,
+                "hour": 8,
+                "minute": 2,
+                "longitude": -43.933,
+                "latitude": -19.917,
+                "city": "Belo Horizonte",
+                "language": "PT",
+            }
+        },
+    )
+
+    # ------------------
+    # Status
+    # ------------------
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "OK"
+
+    # ------------------
+    # Data
+    # ------------------
+
+    ## Sun
+    assert response.json()["data"]["sun"]["name"] == "Sun"
+    assert response.json()["data"]["sun"]["quality"] == "Fixed"
+    assert response.json()["data"]["sun"]["element"] == "Fire"
+    assert response.json()["data"]["sun"]["sign"] == "Leo"
+    assert response.json()["data"]["sun"]["sign_num"] == 4
+    assert round(response.json()["data"]["sun"]["position"]) == 10
+    assert round(response.json()["data"]["sun"]["abs_pos"]) == 130
+    assert response.json()["data"]["sun"]["emoji"] == "♌️"
+    assert response.json()["data"]["sun"]["point_type"] == "Planet"
+    assert response.json()["data"]["sun"]["retrograde"] == False
+
+    ## Moon Phase
+    assert round(response.json()["data"]["lunar_phase"]["degrees_between_s_m"]) == 69
+    assert response.json()["data"]["lunar_phase"]["moon_phase"] == 6
+    assert response.json()["data"]["lunar_phase"]["sun_phase"] == 5
+    assert response.json()["data"]["lunar_phase"]["moon_emoji"] == "🌒"
+
+    # ------------------
+    # Chart
+    # ------------------
+
+    assert type(response.json()["chart"]) == str
+
+    # ------------------
+    # Aspects
+    # ------------------
+
+    assert response.json()["aspects"][0]["p1_name"] == "Sun"
+    assert round(response.json()["aspects"][0]["p1_abs_pos"]) == 130
+    assert response.json()["aspects"][0]["p2_name"] == "Mercury"
+    assert round(response.json()["aspects"][0]["p2_abs_pos"]) == 136
+    assert response.json()["aspects"][0]["aspect"] == "conjunction"
+    assert round(response.json()["aspects"][0]["orbit"]) == 6
+    assert response.json()["aspects"][0]["aspect_degrees"] == 0
+    assert round(response.json()["aspects"][0]["diff"]) == 6
+    assert response.json()["aspects"][0]["p1"] == 0
+    assert response.json()["aspects"][0]["p2"] == 2
